@@ -61,6 +61,15 @@ python3 tools/indexnow.py
 `tools/indexnow.py` 는 공용 엔드포인트 + 네이버 + 빙에 동시에 보냅니다.
 **키 파일(`/{KEY}.txt`)이 실제 도메인에서 열려야** 통보가 수락됩니다 — 배포 후 실행하세요.
 
+빌드와 통보를 한 번에 하려면 발행 스크립트를 쓰세요:
+
+```bash
+tools/publish.sh https://bucheon-massage.pages.dev/magazine/new-post/   # 빌드 + 해당 URL 통보(권장)
+tools/publish.sh                                                        # 빌드 + sitemap 전체 통보
+```
+
+`GOOGLE_APPLICATION_CREDENTIALS` 가 설정돼 있으면 구글 Indexing API 통보까지 한 번에 보냅니다.
+
 ---
 
 ## 3. (선택) 구글 즉시 통보 — Indexing API
@@ -94,7 +103,27 @@ Search Console 속성에 서비스 계정 이메일을 **소유자**로 추가.
 
 ---
 
-## 5. 배포 후 체크리스트
+## 5. 자동화 — GitHub Actions (글 올리면 자동 통보)
+
+`.github/workflows/indexnow.yml` 가 다음을 자동으로 처리합니다.
+
+- **트리거**: `main` 브랜치에 콘텐츠(`content/**`, `build.py`, `assets/**`) push, 또는 수동 실행(Actions → Run workflow)
+- **동작**: 빌드(sitemap·feed·robots·키파일 갱신) → 60초 배포 대기 → IndexNow 통보(빙·네이버·얀덱스)
+- **구글**: 저장소 시크릿 `GOOGLE_INDEXING_SA` (서비스계정 JSON 전체)를 등록하면 구글 Indexing API 통보까지 자동
+
+설정 방법:
+1. **배포 브랜치 확인** — 워크플로의 `branches: [main]` 을 실제 배포 브랜치로 맞추세요.
+2. (선택) **구글 자동 통보** — Settings → Secrets and variables → Actions →
+   `GOOGLE_INDEXING_SA` 에 서비스계정 JSON 파일 내용을 그대로 붙여넣기.
+3. 수동 통보가 필요하면 Actions 탭에서 **Run workflow** → `urls` 칸에 URL 입력(비우면 sitemap 전체).
+
+> IndexNow 는 키 파일이 실제 도메인에서 열려야 하므로, 자동 배포(Cloudflare Pages 등)가
+> push 후 1분 내에 끝나는 환경을 전제로 60초 대기를 둡니다. 배포가 더 느리면 워크플로의
+> `sleep` 값을 늘리세요.
+
+---
+
+## 6. 배포 후 체크리스트
 
 - [ ] `https://<도메인>/{KEY}.txt` 가 열리고 내용이 키와 동일한가
 - [ ] `https://<도메인>/sitemap.xml`, `/feed.xml`, `/robots.txt` 가 정상 노출되는가

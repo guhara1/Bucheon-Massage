@@ -1,0 +1,60 @@
+name: 색인 통보 (IndexNow + 구글 Indexing API)
+
+# 글을 올리거나(콘텐츠 변경 push) 수동 실행하면
+#  - 빌드로 sitemap·feed·robots·IndexNow 키파일을 갱신하고
+#  - 빙·네이버·얀덱스에 IndexNow 로 즉시 통보합니다.
+#  - GOOGLE_INDEXING_SA 시크릿이 있으면 구글 Indexing API 로도 통보합니다.
+#
+# ⚠ IndexNow 는 키 파일(/{KEY}.txt)이 실제 도메인에서 열려야 수락됩니다.
+#    배포(예: Cloudflare Pages 자동배포)가 끝난 뒤 통보하도록 잠시 대기합니다.
+#    배포 브랜치가 main 이 아니면 아래 branches 를 실제 브랜치로 바꾸세요.
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "통보할 URL (공백으로 구분, 비우면 sitemap 전체)"
+        required: false
+        default: ""
+  push:
+    branches: [main]
+    paths:
+      - "content/**"
+      - "build.py"
+      - "assets/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexing-notify
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_INDEXING_SA: ${{ secrets.GOOGLE_INDEXING_SA }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: 빌드 (sitemap·feed·robots·키파일 갱신)
+        run: python3 build.py
+
+      - name: 배포 반영 대기 (키 파일·sitemap 공개 대기)
+        run: sleep 60
+
+      - name: IndexNow 통보 (빙·네이버·얀덱스)
+        run: python3 tools/indexnow.py ${{ github.event.inputs.urls }}
+
+      - name: 구글 Indexing API 통보 (시크릿 있을 때만)
+        if: ${{ env.GOOGLE_INDEXING_SA != '' }}
+        run: |
+          printf '%s' "$GOOGLE_INDEXING_SA" > "$RUNNER_TEMP/sa.json"
+          pip install --quiet google-auth requests
+          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" \
+            python3 tools/google_indexing.py ${{ github.event.inputs.urls }}
