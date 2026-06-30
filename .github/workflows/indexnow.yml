@@ -6,8 +6,8 @@ name: 색인 통보 (IndexNow + 구글 Indexing API)
 #  - GOOGLE_INDEXING_SA 시크릿이 있으면 구글 Indexing API 로도 통보합니다.
 #
 # ⚠ IndexNow 는 키 파일(/{KEY}.txt)이 실제 도메인에서 열려야 수락됩니다.
-#    배포(예: Cloudflare Pages 자동배포)가 끝난 뒤 통보하도록 잠시 대기합니다.
-#    배포 브랜치가 main 이 아니면 아래 branches 를 실제 브랜치로 바꾸세요.
+#    배포(Netlify 자동배포)가 끝난 뒤 통보하도록 잠시 대기합니다.
+#    아래 branches 는 실제 배포(프로덕션) 브랜치와 일치시켜야 트리거됩니다.
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ on:
         required: false
         default: ""
   push:
-    branches: [main]
+    branches: [claude/nifty-knuth-b5zrz7]
     paths:
       - "content/**"
       - "build.py"
