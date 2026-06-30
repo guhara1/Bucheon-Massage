@@ -18,7 +18,7 @@ python3 build.py
 ```
 
 > **도메인**: `content/site.py` 의 `BASE_URL` 이 실제 배포 도메인이어야 sitemap·canonical·
-> IndexNow keyLocation 이 맞습니다. 현재 값: `https://bucheon-massage.pages.dev`
+> IndexNow keyLocation 이 맞습니다. 현재 값: `https://bucheon-massage.netlify.app`
 > (커스텀 도메인 연결 시 이 값을 바꾸고 재빌드 → 재배포)
 
 ---
@@ -52,7 +52,7 @@ python3 build.py
 python3 build.py
 
 # 2) 새 글 URL만 통보 (권장)
-python3 tools/indexnow.py https://bucheon-massage.pages.dev/magazine/new-post/
+python3 tools/indexnow.py https://bucheon-massage.netlify.app/magazine/new-post/
 
 # 또는 sitemap 전체 통보 (인자 없이)
 python3 tools/indexnow.py
@@ -64,7 +64,7 @@ python3 tools/indexnow.py
 빌드와 통보를 한 번에 하려면 발행 스크립트를 쓰세요:
 
 ```bash
-tools/publish.sh https://bucheon-massage.pages.dev/magazine/new-post/   # 빌드 + 해당 URL 통보(권장)
+tools/publish.sh https://bucheon-massage.netlify.app/magazine/new-post/   # 빌드 + 해당 URL 통보(권장)
 tools/publish.sh                                                        # 빌드 + sitemap 전체 통보
 ```
 
@@ -79,7 +79,7 @@ tools/publish.sh                                                        # 빌드
 ```bash
 pip install google-auth requests
 GOOGLE_APPLICATION_CREDENTIALS=/path/service-account.json \
-  python3 tools/google_indexing.py https://bucheon-massage.pages.dev/magazine/new-post/
+  python3 tools/google_indexing.py https://bucheon-massage.netlify.app/magazine/new-post/
 ```
 
 준비: Cloud 프로젝트에서 Indexing API 사용 설정 → 서비스 계정 JSON 발급 →
