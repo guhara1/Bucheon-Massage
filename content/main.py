@@ -3,30 +3,7 @@
 from .site import BASE_URL, BRAND, PHONE, PHONE_DISPLAY
 from .pricing import PRICING
 
-_JSONLD = f"""<meta name="naver-site-verification" content="75c799f90683cbf70749a0f2b236e02d1589dd0f" />
-<script type="application/ld+json">
-{{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "{BRAND}",
-  "url": "{BASE_URL}/",
-  "image": "{BASE_URL}/assets/og-image.png",
-  "logo": "{BASE_URL}/assets/icon-512.png",
-  "description": "부천시 전지역 방문 출장마사지·홈타이 예약 안내",
-  "telephone": "{PHONE}",
-  "areaServed": {{
-    "@type": "AdministrativeArea",
-    "name": "경기도 부천시"
-  }},
-  "contactPoint": {{
-    "@type": "ContactPoint",
-    "telephone": "{PHONE}",
-    "contactType": "reservations",
-    "areaServed": "KR",
-    "availableLanguage": "Korean"
-  }}
-}}
-</script>
+_JSONLD = f"""<meta name="naver-site-verification" content="8dfaacbe9760b878975c3faba743df7c895a75b5" />
 <script type="application/ld+json">
 {{
   "@context": "https://schema.org",

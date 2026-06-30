@@ -9,7 +9,7 @@
 
 예) 매거진 새 글 발행 후:
   python3 build.py
-  python3 tools/indexnow.py https://bucheon-massage.pages.dev/magazine/new-post/
+  python3 tools/indexnow.py https://bucheon-massage.netlify.app/magazine/new-post/
 
 키 파일(/{INDEXNOW_KEY}.txt)은 build.py 가 사이트 루트에 자동 생성합니다.
 배포(Cloudflare Pages 등) 후 키 파일이 실제로 열리는지 먼저 확인하세요.

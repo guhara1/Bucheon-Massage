@@ -6,17 +6,17 @@
 <title>24시간 안내 | 부천 방문 관리 테마</title>
 <meta name="description" content="24시간 이용 안내입니다. 심야·새벽 시간대 방문 관리의 예약 방법과 시간대별 특징, 확인사항을 정리했습니다. 부천시 방문.">
 <meta name="robots" content="index,follow">
-<link rel="canonical" href="https://bucheon-massage.pages.dev/themes/24hours/">
+<link rel="canonical" href="https://bucheon-massage.netlify.app/themes/24hours/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="24시간 안내 | 부천 방문 관리 테마">
 <meta property="og:description" content="24시간 이용 안내입니다. 심야·새벽 시간대 방문 관리의 예약 방법과 시간대별 특징, 확인사항을 정리했습니다. 부천시 방문.">
-<meta property="og:url" content="https://bucheon-massage.pages.dev/themes/24hours/">
+<meta property="og:url" content="https://bucheon-massage.netlify.app/themes/24hours/">
 <meta property="og:site_name" content="간다GO">
-<meta property="og:image" content="https://bucheon-massage.pages.dev/assets/og-image.png">
+<meta property="og:image" content="https://bucheon-massage.netlify.app/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bucheon-massage.pages.dev/assets/og-image.png">
+<meta name="twitter:image" content="https://bucheon-massage.netlify.app/assets/og-image.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
@@ -714,7 +714,201 @@ th { background: var(--panel-2); color: var(--gold-soft); font-family: var(--ser
   letter-spacing: 0.02em;
 }
 .area-group-label + .card-grid { margin-top: 6px; }
+
+/* ── 이용자 평가(별점·후기) ───────────────────────────── */
+.reviews-widget {
+  margin: 30px 0 8px;
+  padding: 26px 24px;
+  background: linear-gradient(180deg, #0e1830, var(--panel));
+  border: 1px solid var(--line-gold);
+  border-radius: 16px;
+}
+.reviews-widget-head {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px 20px;
+  margin-bottom: 18px;
+}
+.reviews-widget-head h2 { margin: 0; border: none; padding: 0; }
+.reviews-widget-head h2::before,
+.reviews-widget-head h2::after { display: none; content: none; }
+.rating-summary { display: flex; align-items: center; gap: 10px; }
+.rating-num {
+  font-family: var(--serif); font-size: 1.7rem; font-weight: 900;
+  line-height: 1; color: var(--gold-soft);
+}
+.rating-count { font-size: 0.82rem; color: var(--text-dim); letter-spacing: 0.02em; }
+.stars { font-size: 1rem; letter-spacing: 1px; white-space: nowrap; }
+.stars-on { color: var(--gold); }
+.stars-off { color: var(--line); }
+
+.review-list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+.review-card {
+  margin: 0; padding: 16px 18px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.review-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.review-author { font-weight: 700; color: var(--text); }
+.review-head .stars { font-size: 0.86rem; }
+.review-score { margin-left: auto; font-weight: 700; color: var(--gold-soft); font-size: 0.92rem; }
+.review-meta { margin: 0 0 8px; font-size: 0.78rem; color: var(--text-dim); letter-spacing: 0.02em; }
+.review-meta time { color: var(--gold); }
+.review-body { margin: 0; color: var(--text-dim); font-size: 0.92rem; line-height: 1.75; }
+.reviews-more { margin: 16px 0 0; text-align: right; font-size: 0.9rem; }
+.reviews-more a { color: var(--gold-soft); }
+
+/* ── 롱테일 내부링크 칩 ──────────────────────────────── */
+.related-links {
+  margin: 26px 0 8px; padding: 20px 22px;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.related-title {
+  margin: 0 0 14px; font-family: var(--serif); font-weight: 700;
+  font-size: 1.05rem; color: var(--gold-soft);
+}
+.rel-chips { display: flex; flex-wrap: wrap; gap: 9px; }
+.rel-chip {
+  display: inline-block; padding: 8px 15px;
+  background: var(--panel-2); border: 1px solid var(--line-gold);
+  border-radius: 20px; font-size: 0.88rem; color: var(--text);
+  letter-spacing: 0.02em; transition: 0.16s;
+}
+.rel-chip:hover {
+  border-color: var(--gold); color: var(--gold-soft);
+  background: linear-gradient(180deg, #13203a, var(--panel-2));
+  transform: translateY(-2px);
+}
+
+@media (max-width: 560px) {
+  .reviews-widget, .related-links { padding: 18px 16px; }
+  .review-list { grid-template-columns: 1fr; }
+}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "HealthAndBeautyBusiness",
+      "@id": "https://bucheon-massage.netlify.app/#business",
+      "name": "간다GO",
+      "url": "https://bucheon-massage.netlify.app/",
+      "image": "https://bucheon-massage.netlify.app/assets/og-image.png",
+      "logo": "https://bucheon-massage.netlify.app/assets/icon-512.png",
+      "description": "부천시 전지역 방문 출장마사지·홈타이 예약 안내",
+      "telephone": "0508-202-4719",
+      "priceRange": "₩₩",
+      "currenciesAccepted": "KRW",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "부천시",
+        "addressRegion": "경기도",
+        "addressCountry": "KR"
+      },
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "경기도 부천시"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "00:00",
+        "closes": "23:59"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": 16,
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": "조О혁"
+          },
+          "datePublished": "2026-05-10",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": 4,
+            "bestRating": 5,
+            "worstRating": 1
+          },
+          "reviewBody": "퇴근 후 늦은 시간 예약했는데 가능했어요. 근막 이완 위주로 받았고 시원했습니다. 다음엔 90분으로 더 길게 받아보려고요."
+        },
+        {
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": "배О린"
+          },
+          "datePublished": "2026-05-06",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": 5,
+            "bestRating": 5,
+            "worstRating": 1
+          },
+          "reviewBody": "예약 전화부터 친절했고 금액도 통화에서 총액으로 정확히 알려주셔서 현장에서 추가 요구가 전혀 없었어요. 깔끔한 진행 감사합니다."
+        },
+        {
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": "남О준"
+          },
+          "datePublished": "2026-05-02",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": 5,
+            "bestRating": 5,
+            "worstRating": 1
+          },
+          "reviewBody": "발이 너무 피곤한 날 불렀는데 발바닥 지압이 정말 시원했어요. 끝나고 물 챙겨 마시라고 안내도 해주시고 마무리까지 꼼꼼했습니다."
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": "https://bucheon-massage.netlify.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "테마별 안내",
+          "item": "https://bucheon-massage.netlify.app/themes/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "24시간",
+          "item": "https://bucheon-massage.netlify.app/themes/24hours/"
+        }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -779,7 +973,7 @@ th { background: var(--panel-2); color: var(--gold-soft); font-family: var(--ser
 </div>
 </section>
 
-<section id="sec-9" class="cta"><h2>예약문의</h2>
+<aside class="reviews-widget" aria-label="이용자 평가"><div class="reviews-widget-head"><h2>이용자 평가</h2><div class="rating-summary"><span class="rating-num">4.8</span><span class="stars" aria-hidden="true"><span class="stars-on">★★★★★</span><span class="stars-off"></span></span><span class="rating-count">이용 후기 16건 기준</span></div></div><ul class="review-list"><li class="review-card"><div class="review-head"><span class="review-author">조О혁</span><span class="stars" aria-hidden="true"><span class="stars-on">★★★★</span><span class="stars-off">☆</span></span><span class="review-score">4.0</span></div><p class="review-meta"><time datetime="2026-05-10">2026. 05. 10</time> · 부천시청역 · 스포츠</p><p class="review-body">퇴근 후 늦은 시간 예약했는데 가능했어요. 근막 이완 위주로 받았고 시원했습니다. 다음엔 90분으로 더 길게 받아보려고요.</p></li><li class="review-card"><div class="review-head"><span class="review-author">배О린</span><span class="stars" aria-hidden="true"><span class="stars-on">★★★★★</span><span class="stars-off"></span></span><span class="review-score">5.0</span></div><p class="review-meta"><time datetime="2026-05-06">2026. 05. 06</time> · 고강동 · 스웨디시</p><p class="review-body">예약 전화부터 친절했고 금액도 통화에서 총액으로 정확히 알려주셔서 현장에서 추가 요구가 전혀 없었어요. 깔끔한 진행 감사합니다.</p></li><li class="review-card"><div class="review-head"><span class="review-author">남О준</span><span class="stars" aria-hidden="true"><span class="stars-on">★★★★★</span><span class="stars-off"></span></span><span class="review-score">5.0</span></div><p class="review-meta"><time datetime="2026-05-02">2026. 05. 02</time> · 원미동 · 발마사지</p><p class="review-body">발이 너무 피곤한 날 불렀는데 발바닥 지압이 정말 시원했어요. 끝나고 물 챙겨 마시라고 안내도 해주시고 마무리까지 꼼꼼했습니다.</p></li></ul><p class="reviews-more"><a href="/reviews/">전체 이용 후기 보기 →</a></p></aside><nav class="related-links" aria-label="관련 안내"><p class="related-title">함께 보면 좋은 테마와 지역</p><div class="rel-chips"><a class="rel-chip" href="/themes/swedish/">스웨디시 마사지</a><a class="rel-chip" href="/themes/thai/">타이마사지·홈타이</a><a class="rel-chip" href="/themes/aroma/">아로마테라피</a><a class="rel-chip" href="/themes/foot/">발마사지</a><a class="rel-chip" href="/themes/couple/">커플 마사지</a><a class="rel-chip" href="/themes/overnight/">심야·수면 가능 마사지</a><a class="rel-chip" href="/themes/sports/">스포츠·경락 관리</a><a class="rel-chip" href="/bucheon/wonmi/sang-dong-chuljangmassage/">상동 출장마사지·홈타이</a><a class="rel-chip" href="/bucheon/wonmi/jung-dong-chuljangmassage/">중동 출장마사지·홈타이</a><a class="rel-chip" href="/bucheon/wonmi/yeokgok-dong-chuljangmassage/">역곡동 방문 마사지</a></div></nav><section id="sec-9" class="cta"><h2>예약문의</h2>
 <p>원하시는 테마와 방문 위치, 희망 시간을 알려주시면 가능 여부를 바로 확인해 드립니다.</p>
 <a class="cta-phone" href="tel:0508-202-4719">0508-202-4719</a>
 </section>

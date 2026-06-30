@@ -17,6 +17,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from content import PAGES
+from content import reviews_data as rd
+from content.related import related_block
+from content.schema import build_schema
 from content.site import (BASE_URL, BRAND, INDEXNOW_KEY, NAV, PHONE, PHONE_DISPLAY)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -117,6 +120,43 @@ def render_toc(items) -> str:
     )
 
 
+# 평점·후기 위젯과 스키마(AggregateRating/Review)를 노출하는 페이지 유형
+_RATING_KINDS = {
+    "home", "area_hub", "gu", "dong", "station_hub", "station",
+    "theme_hub", "theme", "info",
+}
+
+
+def page_kind(path: str) -> str:
+    """경로로 페이지 유형을 판별한다(스키마·후기·관련링크 노출 제어용)."""
+    if path == "":
+        return "home"
+    if path == "bucheon/":
+        return "area_hub"
+    if path == "bucheon/stations/":
+        return "station_hub"
+    if path == "themes/":
+        return "theme_hub"
+    if path == "about/":
+        return "about"
+    if path == "reviews/":
+        return "reviews"
+    if path.startswith("magazine/"):
+        return "magazine"
+    if path.startswith("support/") and path != "support/":
+        return "legal"  # 개인정보·약관 (noindex)
+    if path.startswith("themes/"):
+        return "theme"
+    if path.startswith("bucheon/"):
+        if path.endswith("-gu-chuljangmassage/"):
+            return "gu"
+        parts = path.strip("/").split("/")
+        if len(parts) == 3 and parts[1] in ("wonmi", "sosa", "ojeong"):
+            return "dong"
+        return "station"
+    return "info"  # massage, courses, reservation, guide, support 허브
+
+
 def render_page(page: dict) -> str:
     path = page["path"]
     title = page["title"]
@@ -135,6 +175,36 @@ def render_page(page: dict) -> str:
         else '<meta name="robots" content="index,follow">'
     )
     canonical = BASE_URL.rstrip("/") + "/" + path
+
+    # ── 평점·후기 위젯과 롱테일 내부링크를 본문 끝(예약 CTA 앞)에 삽입한다.
+    kind = page_kind(path)
+    if kind == "reviews":
+        reviews_html = rd.reviews_full()
+        rev_subset = rd.REVIEWS
+        show_rating = True
+    elif kind in _RATING_KINDS:
+        rev_subset = rd.pick_reviews(path, 3)
+        reviews_html = rd.reviews_widget(rev_subset)
+        show_rating = True
+    else:
+        reviews_html = ""
+        rev_subset = []
+        show_rating = False
+
+    related_html = "" if kind == "legal" else related_block(path, kind)
+    extra_blocks = reviews_html + related_html
+    if extra_blocks:
+        marker = '<section class="cta">'
+        idx = body.rfind(marker)
+        if idx != -1:
+            body = body[:idx] + extra_blocks + body[idx:]
+        else:
+            body = body + extra_blocks
+
+    # 구조화 데이터(JSON-LD)는 페이지 고유 extra_head 뒤에 덧붙인다.
+    extra_head = extra_head + build_schema(
+        page, canonical, show_rating, rev_subset, kind == "home"
+    )
 
     # 히어로가 있는 페이지(메인)는 H1을 히어로 안에서 출력한다.
     if hero:
@@ -294,11 +364,25 @@ def build() -> None:
             feed_items.append((loc, page["title"], page["desc"], page.get("date", today)))
         report.append((path or "/", chars, "noindex" if noindex else "index"))
 
-    # sitemap.xml (lastmod 포함 — 색인 신선도 신호)
-    urls = "\n".join(
-        f"  <url><loc>{loc}</loc><lastmod>{lastmod}</lastmod></url>"
-        for loc, lastmod in sitemap_entries
-    )
+    # sitemap.xml (lastmod·changefreq·priority 포함 — 색인 신선도·우선순위 신호)
+    def _sm_hint(loc):
+        rel = loc[len(base):].strip("/")
+        if rel == "":
+            return "daily", "1.0"          # 메인
+        if rel.startswith("magazine"):
+            return "weekly", "0.7"         # 매거진
+        if rel in ("bucheon", "bucheon/stations", "themes"):
+            return "weekly", "0.8"         # 허브
+        return "weekly", "0.7"             # 지역·역·테마·안내 상세
+
+    rows = []
+    for loc, lastmod in sitemap_entries:
+        changefreq, priority = _sm_hint(loc)
+        rows.append(
+            f"  <url><loc>{loc}</loc><lastmod>{lastmod}</lastmod>"
+            f"<changefreq>{changefreq}</changefreq><priority>{priority}</priority></url>"
+        )
+    urls = "\n".join(rows)
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write(
             '<?xml version="1.0" encoding="UTF-8"?>\n'
